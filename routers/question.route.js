@@ -7,13 +7,13 @@ import { OpenAIEmbeddings } from '@langchain/openai';
 
 const router = express.Router();
 
-const qa = async (question) => {
+const qa = async (question, contextMessages = []) => {
     // Ensure that the question is valid
     if (!question || typeof question !== "string") {
         throw new Error("Invalid question provided.");
     }
-    
-    const content = `You are a helpful AI assistant for BaySmile Dental Clinic in San Jose, CA. The clinic offers cleanings, implants, and emergency extractions. It is currently 3:00 PM on a weekday and walk-ins are accepted until 5 PM`;
+
+    const content = contextMessages.slice(0, 3).join(" ");
 
     const docs = [new Document({
         pageContent: content,
@@ -57,14 +57,14 @@ const qa = async (question) => {
 };
 
 router.post("/", async (req, res) => {
-    const { question } = req.body;
+    const { question, conversation } = req.body;
 
     try {
         if (!question) {
             throw new Error("Question is required.");
         }
         
-        const answer = await qa(question);
+        const answer = await qa(question, Array.isArray(conversation) ? conversation : []);
         res.status(201).json({
             success: true,
             data: answer,

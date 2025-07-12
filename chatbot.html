@@ -193,6 +193,7 @@
   let userName = '';
   let userEmail = '';
   let userContext = '';
+  const conversation = [];
 
   chatBtn.addEventListener('click', () => {
     chatBox.style.display = "flex";
@@ -223,6 +224,7 @@
 
     if (stage === 0) {
       userName = message;
+      conversation.push(userName);
       stage = 1;
       setTimeout(() => {
         messagesDiv.innerHTML += `<div class="message bot">Nice to meet you, <strong>${userName}</strong>! What's your email address?</div>`;
@@ -230,6 +232,7 @@
       }, 300);
     } else if (stage === 1) {
       userEmail = message;
+      conversation.push(userEmail);
       stage = 2;
       setTimeout(() => {
         messagesDiv.innerHTML += `<div class="message bot">Thanks! Lastly, what would you like to talk about?</div>`;
@@ -237,27 +240,31 @@
       }, 300);
     } else if (stage === 2) {
       userContext = message;
+      conversation.push(userContext);
       stage = 3;
+      await sendQuestion(userContext);
+    } else {
+      await sendQuestion(message);
+    }
+  }
 
-      // Send all data now
-      try {
-        const response = await fetch('/api/chat.php', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            name: userName,
-            email: userEmail,
-            message: userContext
-          }),
-        });
-        const data = await response.json();
-        const reply = data.reply || `✅ Submitted! Thank you, ${userName}.`;
-        messagesDiv.innerHTML += `<div class="message bot">${reply}</div>`;
-        messagesDiv.scrollTop = messagesDiv.scrollHeight;
-      } catch (error) {
-        messagesDiv.innerHTML += `<div class="message bot">❌ Error: ${error.message}</div>`;
-        messagesDiv.scrollTop = messagesDiv.scrollHeight;
-      }
+  async function sendQuestion(question) {
+    try {
+      const response = await fetch('/api/question', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          question,
+          conversation
+        }),
+      });
+      const data = await response.json();
+      const reply = data.data || data.message;
+      messagesDiv.innerHTML += `<div class="message bot">${reply}</div>`;
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    } catch (error) {
+      messagesDiv.innerHTML += `<div class="message bot">❌ Error: ${error.message}</div>`;
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
     }
   }
 </script>
