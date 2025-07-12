@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <style>
+  .chat-icon {
+    z-index: 9999;
+    background: linear-gradient(135deg, #4f8aff, #3b5bff);
+    height: 64px;
+    width: 64px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .chat-icon:hover {
+    transform: scale(1.08);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
+  }
+
+  #chat-container {
+    position: fixed;
+    bottom: 90px;
+    right: 20px;
+    width: 340px;
+    height: 500px;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+    display: none;
+    font-family: 'Segoe UI', sans-serif;
+    animation: slideUp 0.3s ease-out;
+  }
+
+  @keyframes slideUp {
+    from {
+      transform: translateY(20px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  #chat-header {
+    padding: 14px 18px;
+    background: #3b5bff;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  #chat-header button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+  }
+
+  #chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    background-color: #f4f6f8;
+  }
+
+  .message {
+    margin: 6px 0;
+    padding: 10px 14px;
+    border-radius: 12px;
+    max-width: 80%;
+    font-size: 14px;
+    line-height: 1.4;
+    word-wrap: break-word;
+  }
+
+  .user {
+    background-color: #d9eaff;
+    align-self: flex-end;
+    text-align: right;
+    border-bottom-right-radius: 4px;
+  }
+
+  .bot {
+    background-color: #eeeeee;
+    align-self: flex-start;
+    border-bottom-left-radius: 4px;
+  }
+
+  #chat-input-container {
+    display: flex;
+    align-items: center;
+    border-top: 1px solid #ddd;
+    padding: 10px 12px;
+    background: #fff;
+  }
+
+  #chat-input {
+    flex: 1;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 999px;
+    font-size: 14px;
+    outline: none;
+  }
+
+  #send-btn {
+    background: none;
+    border: none;
+    margin-left: 8px;
+    cursor: pointer;
+    color: #3b5bff;
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #send-btn:hover {
+    color: #244fff;
+  }
+
+  #send-btn svg {
+    width: 22px;
+    height: 22px;
+  }
+</style>
+
+<!-- Chat Toggle Button -->
+<div class="chat-icon" id="chatBtn">
+  <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24">
+    <g fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+      <path stroke-dasharray="72" stroke-dashoffset="72" d="M3 19.5v-15.5c0 -0.55 0.45 -1 1 -1h16c0.55 0 1 0.45 1 1v12c0 0.55 -0.45 1 -1 1h-14.5Z">
+        <animate fill="freeze" attributeName="stroke-dashoffset" dur="0.6s" values="72;0"></animate>
+      </path>
+      <path stroke-dasharray="10" stroke-dashoffset="10" d="M8 7h8">
+        <animate fill="freeze" attributeName="stroke-dashoffset" begin="0.7s" dur="0.2s" values="10;0"></animate>
+      </path>
+      <path stroke-dasharray="10" stroke-dashoffset="10" d="M8 10h8">
+        <animate fill="freeze" attributeName="stroke-dashoffset" begin="1s" dur="0.2s" values="10;0"></animate>
+      </path>
+      <path stroke-dasharray="6" stroke-dashoffset="6" d="M8 13h4">
+        <animate fill="freeze" attributeName="stroke-dashoffset" begin="1.3s" dur="0.2s" values="6;0"></animate>
+      </path>
+    </g>
+  </svg>
+</div>
+
+<!-- Chat Container -->
+<div id="chat-container">
+  <div id="chat-header">
+    Chat Assistant
+    <button id="chatCloseBtn" aria-label="Close chat">×</button>
+  </div>
+  <div id="chat-messages"></div>
+  <div id="chat-input-container">
+    <input id="chat-input" type="text" placeholder="Type a message...">
+    <button id="send-btn" onclick="sendMessage()" aria-label="Send message">
+      <!-- Submit SVG Icon -->
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21.048 3.053C18.87.707 2.486 6.453 2.5 8.55c.015 2.379 6.398 3.11 8.167 3.607c1.064.299 1.349.604 1.594 1.72c1.111 5.052 1.67 7.566 2.94 7.622c2.027.09 7.972-16.158 5.847-18.447M11.5 12.5L15 9" color="currentColor"></path>
+      </svg>
+    </button>
+  </div>
+</div>
+<script>
+  const chatBtn = document.getElementById('chatBtn');
+  const chatBox = document.getElementById('chat-container');
+  const chatCloseBtn = document.getElementById('chatCloseBtn');
+  const chatInput = document.getElementById('chat-input');
+  const messagesDiv = document.getElementById('chat-messages');
+
+  let stage = 0;
+  let userName = '';
+  let userEmail = '';
+  let userContext = '';
+
+  chatBtn.addEventListener('click', () => {
+    chatBox.style.display = "flex";
+    chatBtn.style.display = "none";
+    setTimeout(() => {
+      messagesDiv.innerHTML += `<div class="message bot">👋 Hi there! What's your name?</div>`;
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }, 200);
+  });
+
+  chatCloseBtn.addEventListener('click', () => {
+    chatBox.style.display = "none";
+    chatBtn.style.display = "flex";
+  });
+
+  chatInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') sendMessage();
+  });
+
+  async function sendMessage() {
+    const input = chatInput;
+    const message = input.value.trim();
+    if (!message) return;
+
+    messagesDiv.innerHTML += `<div class="message user">${message}</div>`;
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    input.value = '';
+
+    if (stage === 0) {
+      userName = message;
+      stage = 1;
+      setTimeout(() => {
+        messagesDiv.innerHTML += `<div class="message bot">Nice to meet you, <strong>${userName}</strong>! What's your email address?</div>`;
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      }, 300);
+    } else if (stage === 1) {
+      userEmail = message;
+      stage = 2;
+      setTimeout(() => {
+        messagesDiv.innerHTML += `<div class="message bot">Thanks! Lastly, what would you like to talk about?</div>`;
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      }, 300);
+    } else if (stage === 2) {
+      userContext = message;
+      stage = 3;
+
+      // Send all data now
+      try {
+        const response = await fetch('/api/chat.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: userName,
+            email: userEmail,
+            message: userContext
+          }),
+        });
+        const data = await response.json();
+        const reply = data.reply || `✅ Submitted! Thank you, ${userName}.`;
+        messagesDiv.innerHTML += `<div class="message bot">${reply}</div>`;
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      } catch (error) {
+        messagesDiv.innerHTML += `<div class="message bot">❌ Error: ${error.message}</div>`;
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      }
+    }
+  }
+</script>
+
+
+</body>
+</html>
