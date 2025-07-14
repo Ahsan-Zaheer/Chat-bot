@@ -1,56 +1,42 @@
+// server.js or routes/message.js
 import express from "express";
-import Message from "../models/message.model.js";
+import weaviate from "weaviate-ts-client";
+import { client } from "../config/db";
 
 const router = express.Router();
 
 
-  router.post("/", async (req, res) => {
-    const message = req.body;
-    if (!message.name || !message.email || !message.phone || !message.message) {
-      return res.status(400).json({
-        success: false,
-        message: "Please fill all fields"
-      })
-    }
-  
-    const newMessage = new Message(message);
-  
-    try {
-      await newMessage.save();
-      res.status(201).json({
-        success: true,
-        data: newMessage,
-        message: "Message sent successfully"
-      })
-  
-  
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({
-        success: false,
-        message: "Message not sent"
-      })
-  
-    }
-  });
-  
-  router.get('/', async (req, res) => {
-    try {
-      const messages = await Message.find({});
-  
-      res.status(200).json({
-        success: true,
-        data: messages
-      });
-  
-    } catch (error) {
-  
-      res.status(500).json({
-        success: false,
-        message: "Server Error"
-      });
-  
-    }
-  })
+// POST /api/message
+router.post("/message", async (req, res) => {
+  const { name, email, info, message } = req.body;
 
-  export default router;
+  if (!name || !email || !info || !message) {
+    return res.status(400).json({ error: "All fields are required." });
+  }
+
+  try {
+    const weaviateRes = await client.data
+      .creator()
+      .withClassName("Message")
+      .withProperties({
+        name,
+        email,
+        phone,
+        message,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      })
+      .do();
+
+    res.status(201).json({
+      success: true,
+      weaviateId: weaviateRes.id,
+      message: "Message stored successfully",
+    });
+  } catch (err) {
+    console.error("Weaviate insert error:", err.message);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+export default router;

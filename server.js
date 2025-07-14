@@ -30,7 +30,7 @@ app.use("/api/question", questionRoute);
 
 
 app.listen(3000, () => {
-  connectDB();
+  // connectDB();
   console.log("Server is running on http://localhost:3000");
 });
 

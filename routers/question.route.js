@@ -13,7 +13,7 @@ const qa = async (question, contextMessages = []) => {
         throw new Error("Invalid question provided.");
     }
 
-    const content = contextMessages.slice(0, 3).join(" ");
+    const content = `You are a helpful AI assistant for ${contextMessages.slice(0, 3).join(" ")}`;
 
     const docs = [new Document({
         pageContent: content,

@@ -143,6 +143,53 @@
     width: 22px;
     height: 22px;
   }
+  .typing {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 14px;
+  margin: 6px 0;
+  background-color: #eeeeee;
+  border-radius: 12px;
+  max-width: 80%;
+  font-size: 14px;
+  line-height: 1.4;
+  border-bottom-left-radius: 4px;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.typing span {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background: #999;
+  border-radius: 50%;
+  animation: bounce 1.2s infinite;
+}
+
+.typing span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.typing span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes bounce {
+  0%, 80%, 100% {
+    transform: scale(0.8);
+    opacity: 0.3;
+  }
+  40% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 </style>
 
 <!-- Chat Toggle Button -->
@@ -195,18 +242,24 @@
   let userContext = '';
   const conversation = [];
 
+
+  let hasStarted = false;
+
   chatBtn.addEventListener('click', () => {
     chatBox.style.display = "flex";
-    chatBtn.style.display = "none";
-    setTimeout(() => {
-      messagesDiv.innerHTML += `<div class="message bot">👋 Hi there! What's your name?</div>`;
-      messagesDiv.scrollTop = messagesDiv.scrollHeight;
-    }, 200);
+
+    if (!hasStarted) {
+      hasStarted = true;
+      setTimeout(() => {
+        messagesDiv.innerHTML += `<div class="message bot">👋 Hi there! What's your name?</div>`;
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      }, 200);
+    }
   });
+
 
   chatCloseBtn.addEventListener('click', () => {
     chatBox.style.display = "none";
-    chatBtn.style.display = "flex";
   });
 
   chatInput.addEventListener('keypress', (e) => {
@@ -235,7 +288,7 @@
       conversation.push(userEmail);
       stage = 2;
       setTimeout(() => {
-        messagesDiv.innerHTML += `<div class="message bot">Thanks! Lastly, what would you like to talk about?</div>`;
+        messagesDiv.innerHTML += `<div class="message bot">Thanks! Lastly, Please tell me about yourself?</div>`;
         messagesDiv.scrollTop = messagesDiv.scrollHeight;
       }, 300);
     } else if (stage === 2) {
@@ -249,8 +302,15 @@
   }
 
   async function sendQuestion(question) {
+    const typingDiv = document.createElement('div');
+    typingDiv.classList.add('typing');
+    typingDiv.innerHTML = '<span></span><span></span><span></span>';
+    messagesDiv.appendChild(typingDiv);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+
     try {
-      const response = await fetch('/api/question', {
+      const response = await fetch('https://studio.geniusai.biz/api/question', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -260,8 +320,13 @@
       });
       const data = await response.json();
       const reply = data.data || data.message;
+      messagesDiv.removeChild(typingDiv);
       messagesDiv.innerHTML += `<div class="message bot">${reply}</div>`;
       messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+
+
+
     } catch (error) {
       messagesDiv.innerHTML += `<div class="message bot">❌ Error: ${error.message}</div>`;
       messagesDiv.scrollTop = messagesDiv.scrollHeight;
