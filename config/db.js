@@ -1,5 +1,8 @@
 // index.js
 import weaviate from 'weaviate-ts-client';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 export const client = weaviate.client({
   scheme: 'https',
@@ -7,4 +10,5 @@ export const client = weaviate.client({
   // Uncomment below if your cluster requires an API key
   // apiKey: new weaviate.ApiKey('YOUR_API_KEY'),
 });
+
 
