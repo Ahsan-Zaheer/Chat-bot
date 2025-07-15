@@ -241,6 +241,7 @@
   let userEmail = '';
   let userContext = '';
   const conversation = [];
+  const chatHistory = [];
 
 
   let hasStarted = false;
@@ -272,6 +273,7 @@
     if (!message) return;
 
     messagesDiv.innerHTML += `<div class="message user">${message}</div>`;
+    chatHistory.push({ role: 'user', text: message });
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
     input.value = '';
 
@@ -280,7 +282,9 @@
       conversation.push(userName);
       stage = 1;
       setTimeout(() => {
-        messagesDiv.innerHTML += `<div class="message bot">Nice to meet you, <strong>${userName}</strong>! What's your email address?</div>`;
+        const botMsg = `Nice to meet you, ${userName}! What's your email address?`;
+        messagesDiv.innerHTML += `<div class="message bot">${botMsg}</div>`;
+        chatHistory.push({ role: 'bot', text: botMsg });
         messagesDiv.scrollTop = messagesDiv.scrollHeight;
       }, 300);
     } else if (stage === 1) {
@@ -288,7 +292,9 @@
       conversation.push(userEmail);
       stage = 2;
       setTimeout(() => {
-        messagesDiv.innerHTML += `<div class="message bot">Thanks! Lastly, Please tell me about yourself?</div>`;
+        const botMsg = 'Thanks! Lastly, Please tell me about yourself?';
+        messagesDiv.innerHTML += `<div class="message bot">${botMsg}</div>`;
+        chatHistory.push({ role: 'bot', text: botMsg });
         messagesDiv.scrollTop = messagesDiv.scrollHeight;
       }, 300);
     } else if (stage === 2) {
@@ -322,18 +328,33 @@
       const reply = data.data || data.message;
       messagesDiv.removeChild(typingDiv);
       messagesDiv.innerHTML += `<div class="message bot">${reply}</div>`;
+      chatHistory.push({ role: 'bot', text: reply });
       messagesDiv.scrollTop = messagesDiv.scrollHeight;
-
-
-
+      await saveChat();
 
     } catch (error) {
       messagesDiv.innerHTML += `<div class="message bot">❌ Error: ${error.message}</div>`;
       messagesDiv.scrollTop = messagesDiv.scrollHeight;
     }
   }
-</script>
 
+  async function saveChat() {
+    try {
+      await fetch('https://studio.geniusai.biz/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: userName,
+          email: userEmail,
+          info: userContext,
+          conversation: chatHistory
+        })
+      });
+    } catch (e) {
+      console.error('Failed to save chat', e);
+    }
+  }
+</script>
 
 </body>
 </html>
