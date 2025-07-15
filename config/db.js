@@ -6,9 +6,9 @@ dotenv.config();
 
 export const client = weaviate.client({
   scheme: 'https',
-  host: 'qtpcyernquleegozqv5ca.c0.us-west3.gcp.weaviate.cloud',
+  host: 'xbcf7zntqbittvuwdzyshw.c0.asia-southeast1.gcp.weaviate.cloud',
   // Uncomment below if your cluster requires an API key
-  // apiKey: new weaviate.ApiKey('YOUR_API_KEY'),
+  apiKey: new weaviate.ApiKey('WGF1RUxPc0tBRGM3MmhxRF9RRUV4blE3c3pJYktrM0lPcUNCL3ZTR0dPZmpzK1BCVVlCK0RxSzhtajFRPV92MjAw'),
 });
 
 
