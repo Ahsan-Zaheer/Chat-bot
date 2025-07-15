@@ -242,6 +242,7 @@
   let userContext = '';
   const conversation = [];
   const chatHistory = [];
+  let chatId = null;
 
 
   let hasStarted = false;
@@ -340,16 +341,26 @@
 
   async function saveChat() {
     try {
-      await fetch('http://localhost:3000/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: userName,
-          email: userEmail,
-          info: userContext,
-          conversation: chatHistory
-        })
-      });
+      if (!chatId) {
+        const res = await fetch('http://localhost:3000/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: userName,
+            email: userEmail,
+            info: userContext,
+            conversation: chatHistory
+          })
+        });
+        const data = await res.json();
+        chatId = data.id;
+      } else {
+        await fetch(`http://localhost:3000/api/chat/${chatId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ conversation: chatHistory })
+        });
+      }
 
       console.log('saved');
       
