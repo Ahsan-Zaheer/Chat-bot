@@ -33,4 +33,27 @@ router.post('/', async (req, res) => {
   }
 });
 
+router.put('/:id', async (req, res) => {
+  const { id } = req.params;
+  const { conversation } = req.body;
+
+  if (!id || !Array.isArray(conversation)) {
+    return res.status(400).json({ success: false, message: 'id and conversation are required' });
+  }
+
+  try {
+    await client.data
+      .merger()
+      .withClassName('Chat')
+      .withId(id)
+      .withProperties({ conversation: JSON.stringify(conversation) })
+      .do();
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Error updating chat in Weaviate:', err.message);
+    res.status(500).json({ success: false, message: 'Failed to update chat' });
+  }
+});
+
 export default router;
