@@ -1,55 +1,36 @@
 import express from "express";
 import { ChatOpenAI } from "@langchain/openai";
-import { loadQARefineChain } from "langchain/chains";
-import { Document } from '@langchain/core/documents';
-import { MemoryVectorStore } from "langchain/vectorstores/memory";
-import { OpenAIEmbeddings } from '@langchain/openai';
+import { ConversationChain } from "langchain/chains";
+import { BufferMemory, ChatMessageHistory } from "langchain/memory";
 
 const router = express.Router();
 
-const qa = async (question, contextMessages = []) => {
-    // Ensure that the question is valid
+const qa = async (question, history = []) => {
     if (!question || typeof question !== "string") {
         throw new Error("Invalid question provided.");
     }
 
-    const content = `You are a helpful AI assistant for ${contextMessages.slice(0, 3).join(" ")}`;
+    const chatHistory = new ChatMessageHistory();
+    for (const msg of history) {
+        if (msg.role === 'user') {
+            await chatHistory.addUserMessage(msg.text);
+        } else if (msg.role === 'bot') {
+            await chatHistory.addAIChatMessage(msg.text);
+        }
+    }
 
-    const docs = [new Document({
-        pageContent: content,
-    })];
-
+    const memory = new BufferMemory({ chatHistory, returnMessages: true });
     const model = new ChatOpenAI({
         temperature: 0,
         modelName: 'gpt-4o-mini',
         apiKey: process.env.OPEN_AI_KEY
     });
 
-    const chain = loadQARefineChain(model);
-    
-    // Embeddings creation
-    const embeddings = new OpenAIEmbeddings({
-        openAIApiKey: process.env.OPEN_AI_KEY
-    });
+    const chain = new ConversationChain({ llm: model, memory });
 
     try {
-        // MemoryVectorStore expects an array of documents
-        const store = await MemoryVectorStore.fromDocuments(docs, embeddings);
-
-        // Perform similarity search using the question
-        const relevantDocs = await store.similaritySearch(question);
-
-        if (relevantDocs.length === 0) {
-            return "No relevant documents found to answer the question.";
-        }
-
-        const res = await chain.invoke({
-            input_documents: relevantDocs,
-            question,
-        });
-
-        return res.output_text;
-
+        const res = await chain.call({ input: question });
+        return res.response;
     } catch (error) {
         console.error("Error during QA processing:", error);
         throw new Error("Failed to process the question. Please try again.");

@@ -322,7 +322,7 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           question,
-          conversation
+          conversation: chatHistory
         }),
       });
       const data = await response.json();
