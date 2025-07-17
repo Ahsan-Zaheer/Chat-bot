@@ -1,11 +1,12 @@
 import express from "express";
 import { ChatOpenAI } from "@langchain/openai";
+import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { ConversationChain } from "langchain/chains";
 import { BufferMemory, ChatMessageHistory } from "langchain/memory";
 
 const router = express.Router();
 
-const qa = async (question, history = []) => {
+const qa = async (question, history = [], modelChoice = "gpt-4o") => {
     if (!question || typeof question !== "string") {
         throw new Error("Invalid question provided.");
     }
@@ -20,11 +21,20 @@ const qa = async (question, history = []) => {
     }
 
     const memory = new BufferMemory({ chatHistory, returnMessages: true });
-    const model = new ChatOpenAI({
-        temperature: 0,
-        modelName: 'gpt-4o-mini',
-        apiKey: process.env.OPEN_AI_KEY
-    });
+    let model;
+    if (modelChoice === 'gemini') {
+        model = new ChatGoogleGenerativeAI({
+            modelName: 'gemini-pro',
+            apiKey: process.env.GOOGLE_API_KEY,
+            temperature: 0,
+        });
+    } else {
+        model = new ChatOpenAI({
+            temperature: 0,
+            modelName: 'gpt-4o-mini',
+            apiKey: process.env.OPEN_AI_KEY
+        });
+    }
 
     const chain = new ConversationChain({ llm: model, memory });
 
@@ -38,14 +48,18 @@ const qa = async (question, history = []) => {
 };
 
 router.post("/", async (req, res) => {
-    const { question, conversation } = req.body;
+    const { question, conversation, model } = req.body;
 
     try {
         if (!question) {
             throw new Error("Question is required.");
         }
         
-        const answer = await qa(question, Array.isArray(conversation) ? conversation : []);
+        const answer = await qa(
+            question,
+            Array.isArray(conversation) ? conversation : [],
+            typeof model === 'string' ? model : 'gpt-4o'
+        );
         res.status(201).json({
             success: true,
             data: answer,
