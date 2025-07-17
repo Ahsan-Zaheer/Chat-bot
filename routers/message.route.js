@@ -1,6 +1,4 @@
-// server.js or routes/message.js
 import express from "express";
-import weaviate from "weaviate-ts-client";
 import { client } from "../config/db.js";
 
 
