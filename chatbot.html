@@ -323,9 +323,9 @@
   <div id="chat-header">
     
 
-    <select class="model-selector">
-      <option value="GPT-4o">GPT 4o</option>
-      <option value="Gemini-Ai">Gemini Ai</option>
+    <select class="model-selector" id="model-select">
+      <option value="gpt-4o">GPT 4o</option>
+      <option value="gemini">Gemini Pro</option>
     </select>
     <div style="display: flex; align-items: center; justify-content: center;" >
       <button id="chatCloseBtn" aria-label="Close chat">
@@ -364,6 +364,12 @@
   const conversation = [];
   const chatHistory = [];
   let chatId = null;
+
+  const modelSelect = document.getElementById('model-select');
+  let selectedModel = modelSelect.value;
+  modelSelect.addEventListener('change', () => {
+    selectedModel = modelSelect.value;
+  });
 
 
   let hasStarted = false;
@@ -487,7 +493,8 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           question,
-          conversation: chatHistory
+          conversation: chatHistory,
+          model: selectedModel
         }),
       });
       const data = await response.json();
