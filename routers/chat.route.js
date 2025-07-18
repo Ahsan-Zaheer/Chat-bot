@@ -56,4 +56,25 @@ router.put('/:id', async (req, res) => {
   }
 });
 
+router.get('/all', async (req, res) => {
+  try {
+    const result = await client.graphql
+      .get()
+      .withClassName('Chat')
+      .withFields('name email info conversation createdAt')
+      .do();
+
+    const chats = result.data.Get.Chat.map((chat) => ({
+      ...chat,
+      conversation: JSON.parse(chat.conversation),
+    }));
+
+    res.json({ success: true, data: chats });
+  } catch (err) {
+    console.error('Error fetching chats from Weaviate:', err.message);
+    res.status(500).json({ success: false, message: 'Failed to fetch chats' });
+  }
+});
+
+
 export default router;

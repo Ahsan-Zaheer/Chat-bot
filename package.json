@@ -11,11 +11,11 @@
     "start": "node server.js"
   },
   "dependencies": {
+    "@langchain/google-genai": "^0.2.15",
     "cors": "^2.8.5",
     "dotenv": "^17.2.0",
     "express": "^5.1.0",
     "langchain": "^0.3.29",
-    "weaviate-ts-client": "^2.2.0",
-    "@langchain/google-genai": "^0.2.15"
+    "weaviate-ts-client": "^2.2.0"
   }
 }
