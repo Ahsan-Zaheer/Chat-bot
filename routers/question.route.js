@@ -27,7 +27,7 @@ const qa = async (question, history = [], modelChoice = "gpt-4o") => {
         throw new Error("Missing GOOGLE_API_KEY");
     }
         model = new ChatGoogleGenerativeAI({
-            modelName: 'gemini-pro',
+            model: 'gemini-pro',
             apiKey: process.env.GOOGLE_API_KEY,
             temperature: 0,
         });
