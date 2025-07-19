@@ -2,6 +2,7 @@ import { ChatOpenAI } from "@langchain/openai";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { ConversationChain } from "langchain/chains";
 import { BufferMemory, ChatMessageHistory } from "langchain/memory";
+import { SystemMessage } from "@langchain/core/messages";
 
 export const qa = async (question, history = [], modelChoice = "gpt-4o", webContent = "") => {
   if (!question || typeof question !== "string") {
@@ -11,7 +12,7 @@ export const qa = async (question, history = [], modelChoice = "gpt-4o", webCont
   const chatHistory = new ChatMessageHistory();
 
   if (webContent) {
-    await chatHistory.addSystemMessage(`Website content:\n${webContent}`);
+    await chatHistory.addMessage(new SystemMessage(`Website content:\n${webContent}`));
   }
 
   for (const msg of history) {
@@ -22,7 +23,7 @@ export const qa = async (question, history = [], modelChoice = "gpt-4o", webCont
     }
   }
 
-  await chatHistory.addSystemMessage('When responding, include the chat history, the website content, and the user message.');
+  await chatHistory.addMessage(new SystemMessage('When responding, include the chat history, the website content, and the user message.'));
 
   const memory = new BufferMemory({ chatHistory, returnMessages: true });
   let model;
