@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import messageRoutes from "./routers/message.route.js";
 import questionRoute from "./routers/question.route.js";
 import chatRoute from "./routers/chat.route.js";
+import ragRoute from "./routers/rag.route.js";
 import cors from "cors";
 
 
@@ -34,6 +35,7 @@ app.use(cors({
 app.use("/api/message", messageRoutes);
 app.use("/api/question", questionRoute);
 app.use("/api/chat", chatRoute);
+app.use("/api/rag", ragRoute);
 
 
 
