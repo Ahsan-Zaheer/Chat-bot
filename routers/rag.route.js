@@ -81,7 +81,7 @@ router.post('/', async (req, res) => {
       })
     );
 
-    return res.json({ message: 'Successful', content: vectorContent });
+    return res.json({ message: 'Successful', content: vectorContent, text: cleanContent });
   } catch (error) {
     console.error('Error in POST /api/rag:', error);
     return res.status(500).json({ message: 'Failed to scrape the website', error: error.message });
