@@ -391,6 +391,7 @@
   const conversation = [];
   const chatHistory = [];
   let chatId = null;
+  let scrapedContent = '';
 
   async function scrapeWebsite() {
     const url = urlInput.value.trim();
@@ -411,8 +412,10 @@
       const data = await response.json();
       messagesDiv.removeChild(typingDiv);
       if (response.ok) {
+        scrapedContent = data.text || '';
         messagesDiv.innerHTML += `<div class="message bot">${data.message}</div>`;
       } else {
+        scrapedContent = '';
         messagesDiv.innerHTML += `<div class="message bot">❌ ${data.message}</div>`;
       }
       messagesDiv.scrollTop = messagesDiv.scrollHeight;
@@ -552,7 +555,8 @@
         body: JSON.stringify({
           question,
           conversation: chatHistory,
-          model: selectedModel
+          model: selectedModel,
+          webContent: scrapedContent
         }),
       });
       const data = await response.json();
