@@ -1,15 +1,16 @@
+// routers/rag.route.js
 import express from 'express';
 import { PuppeteerWebBaseLoader } from '@langchain/community/document_loaders/web/puppeteer';
-import * as puppeteer from 'puppeteer';
-import cheerio from 'cheerio';
+import * as cheerio from 'cheerio';
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 import { Document } from 'langchain/document';
 import { OpenAIEmbeddings } from '@langchain/openai';
-import pc from '../config/pinecone.js';
 import { v4 as uuidv4 } from 'uuid';
+import { client } from '../config/db.js';
 
 const router = express.Router();
 
+// Clean up HTML content
 const dataCleanUp = (pageContent) => {
   const $ = cheerio.load(pageContent);
   $('script, style').remove();
@@ -36,7 +37,7 @@ router.post('/', async (req, res) => {
           await browser.close();
           return textContent || '';
         } catch (error) {
-          console.error('Error occurred while loading the page: ', error);
+          console.error('Error occurred while loading the page:', error);
           await browser.close();
           return '';
         }
@@ -57,20 +58,26 @@ router.post('/', async (req, res) => {
     ]);
 
     const embeddings = new OpenAIEmbeddings({
-      apiKey: process.env.OPEN_AI_KEY,
+      apiKey: process.env.OPEN_AI_KEY, // Replace with your OpenAI API Key
       model: 'text-embedding-3-large',
     });
 
-    const index = pc.index('ai-customer-support');
-
     const vectorContent = await Promise.all(
       splitContent.map(async (doc) => {
-        const vectors = await embeddings.embedDocuments([doc.pageContent]);
-        const uniqueId = uuidv4();
-        await index.upsert([
-          { id: uniqueId, values: vectors[0], metadata: { text: doc.pageContent } },
-        ]);
-        return uniqueId;
+        const [embedding] = await embeddings.embedDocuments([doc.pageContent]);
+        const id = uuidv4();
+
+        await client.data
+          .creator()
+          .withClassName('WebContent') // Ensure this class exists in Weaviate
+          .withId(id)
+          .withProperties({
+            text: doc.pageContent,
+          })
+          .withVector(embedding)
+          .do();
+
+        return id;
       })
     );
 

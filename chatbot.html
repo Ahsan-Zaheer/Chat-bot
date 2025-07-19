@@ -488,7 +488,7 @@
 
 
     try {
-      const response = await fetch('http://localhost:3000/api/question', {
+      const response = await fetch('https://studio.geniusai.biz/api/question', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -514,7 +514,7 @@
   async function saveChat() {
     try {
       if (!chatId) {
-        const res = await fetch('http://localhost:3000/api/chat', {
+        const res = await fetch('https://studio.geniusai.biz/api/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -527,7 +527,7 @@
         const data = await res.json();
         chatId = data.id;
       } else {
-        await fetch(`http://localhost:3000/api/chat/${chatId}`, {
+        await fetch(`https://studio.geniusai.biz/chat/${chatId}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ conversation: chatHistory })

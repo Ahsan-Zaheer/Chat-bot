@@ -23,14 +23,17 @@ const qa = async (question, history = [], modelChoice = "gpt-4o") => {
     const memory = new BufferMemory({ chatHistory, returnMessages: true });
     let model;
     if (modelChoice === 'gemini') {
-         if (!process.env.GOOGLE_API_KEY) {
+         if (!process.env.GOOGLE_API_KEY) {s
         throw new Error("Missing GOOGLE_API_KEY");
     }
         model = new ChatGoogleGenerativeAI({
-            model: 'gemini-pro',
+            model: 'gemini-2.5-flash',
             apiKey: process.env.GOOGLE_API_KEY,
             temperature: 0,
         });
+
+    
+        
     } else {
         model = new ChatOpenAI({
             temperature: 0,
