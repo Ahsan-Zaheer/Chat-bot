@@ -147,6 +147,30 @@
       width: 22px;
       height: 22px;
     }
+
+    #url-input {
+      padding: 4px 8px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 12px;
+      margin-right: 4px;
+      width: 120px;
+    }
+
+    #scrape-btn {
+      background: #fff;
+      border: none;
+      color: #3b5bff;
+      cursor: pointer;
+      padding: 4px 8px;
+      font-size: 12px;
+      border-radius: 8px;
+      margin-right: 8px;
+    }
+
+    #scrape-btn:hover {
+      background: #f0f0ff;
+    }
     .typing {
     display: inline-flex;
     align-items: center;
@@ -321,7 +345,9 @@
 <!-- Chat Container -->
 <div id="chat-container">
   <div id="chat-header">
-    
+
+    <input id="url-input" type="text" placeholder="Website URL" />
+    <button id="scrape-btn" onclick="scrapeWebsite()">RAG</button>
 
     <select class="model-selector" id="model-select">
       <option value="gpt-4o">GPT 4o</option>
@@ -354,6 +380,7 @@
   const chatBtn = document.getElementById('chatBtn');
   const chatBox = document.getElementById('chat-container');
   const chatCloseBtn = document.getElementById('chatCloseBtn');
+  const urlInput = document.getElementById('url-input');
   const chatInput = document.getElementById('chat-input');
   const messagesDiv = document.getElementById('chat-messages');
 
@@ -364,6 +391,37 @@
   const conversation = [];
   const chatHistory = [];
   let chatId = null;
+
+  async function scrapeWebsite() {
+    const url = urlInput.value.trim();
+    if (!url) return;
+
+    const typingDiv = document.createElement('div');
+    typingDiv.classList.add('typing');
+    typingDiv.innerHTML = '<span></span><span></span><span></span>';
+    messagesDiv.appendChild(typingDiv);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+    try {
+      const response = await fetch('https://studio.geniusai.biz/api/rag', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url })
+      });
+      const data = await response.json();
+      messagesDiv.removeChild(typingDiv);
+      if (response.ok) {
+        messagesDiv.innerHTML += `<div class="message bot">${data.message}</div>`;
+      } else {
+        messagesDiv.innerHTML += `<div class="message bot">❌ ${data.message}</div>`;
+      }
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    } catch (e) {
+      messagesDiv.removeChild(typingDiv);
+      messagesDiv.innerHTML += `<div class="message bot">❌ Error: ${e.message}</div>`;
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+  }
 
   const modelSelect = document.getElementById('model-select');
   let selectedModel = modelSelect.value;
