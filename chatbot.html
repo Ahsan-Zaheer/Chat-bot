@@ -1,610 +1,710 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Document</title>
+  </head>
+  <body>
 
 
-  <style>
-    .chat-icon {
-      z-index: 9999;
-      background: linear-gradient(135deg, #4f8aff, #3b5bff);
-      height: 64px;
-      width: 64px;
-      border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-      cursor: pointer;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .chat-icon:hover {
-      transform: scale(1.08);
-      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
-    }
-
-    #chat-container {
-      position: fixed;
-      bottom: 90px;
-      right: 20px;
-      width: 340px;
-      height: 500px;
-      border-radius: 16px;
-      display: flex;
-      flex-direction: column;
-      background: #ffffff;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-      overflow: hidden;
-      display: none;
-      font-family: 'Segoe UI', sans-serif;
-      animation: slideUp 0.3s ease-out;
-    }
-
-    @keyframes slideUp {
-      from {
-        transform: translateY(20px);
-        opacity: 0;
+    <style>
+      .chat-icon {
+        z-index: 9999;
+        background: linear-gradient(135deg, #4f8aff, #3b5bff);
+        height: 64px;
+        width: 64px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
       }
-      to {
-        transform: translateY(0);
-        opacity: 1;
+
+      .chat-icon:hover {
+        transform: scale(1.08);
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
       }
-    }
 
-    #chat-header {
-      padding: 14px 18px;
-      background: #3b5bff;
-      color: white;
-      font-size: 16px;
-      font-weight: 600;
-      display: flex;
-      justify-content: space-between;
+      #chat-container {
+        position: fixed;
+        bottom: 90px;
+        right: 20px;
+        width: 340px;
+        height: 500px;
+        border-radius: 16px;
+        display: flex;
+        flex-direction: column;
+        background: #ffffff;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+        overflow: hidden;
+        display: none;
+        font-family: 'Segoe UI', sans-serif;
+        animation: slideUp 0.3s ease-out;
+      }
+
+      @keyframes slideUp {
+        from {
+          transform: translateY(20px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      #chat-header {
+        padding: 14px 18px;
+        background: #3b5bff;
+        color: white;
+        font-size: 16px;
+        font-weight: 600;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      #chat-header button {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 20px;
+        cursor: pointer;
+      }
+
+      #chat-messages {
+        flex: 1;
+        overflow-y: auto;
+        padding: 16px;
+        background-color: #f4f6f8;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .message {
+        margin: 6px 0;
+        padding: 10px 14px;
+        border-radius: 12px;
+        max-width: 80%;
+        font-size: 14px;
+        line-height: 1.4;
+        word-wrap: break-word;
+      }
+
+      .user {
+        background-color: #d9eaff;
+        align-self: flex-end;
+        text-align: right;
+        border-bottom-right-radius: 4px;
+      }
+
+      .bot {
+        background-color: #eeeeee;
+        align-self: flex-start;
+        border-bottom-left-radius: 4px;
+      }
+
+      #chat-input-container {
+        display: flex;
+        align-items: center;
+        border-top: 1px solid #ddd;
+        padding: 10px 12px;
+        background: #fff;
+      }
+
+      #chat-input {
+        flex: 1;
+        padding: 10px 12px;
+        border: 1px solid #ccc;
+        border-radius: 999px;
+        font-size: 14px;
+        outline: none;
+      }
+
+      #send-btn {
+        background: none;
+        border: none;
+        margin-left: 8px;
+        cursor: pointer;
+        color: #3b5bff;
+        padding: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      #send-btn:hover {
+        color: #244fff;
+      }
+
+      #send-btn svg {
+        width: 22px;
+        height: 22px;
+      }
+
+    
+
+      #scrape-btn {
+    
+        height: 100%;
+        border: none;
+      
+        cursor: pointer;
+        padding: 4px 8px;
+        font-size: 14px !important;
+        border-radius: 8px;
+        margin-right: 8px;
+        outline: none;
+        background: whitesmoke;
+      }
+
+      #scrape-btn:hover {
+        background: #f0f0ff;
+        color: black !important;
+      }
+      .typing {
+      display: inline-flex;
       align-items: center;
-    }
-
-    #chat-header button {
-      background: none;
-      border: none;
-      color: white;
-      font-size: 20px;
-      cursor: pointer;
-    }
-
-    #chat-messages {
-      flex: 1;
-      overflow-y: auto;
-      padding: 16px;
-      background-color: #f4f6f8;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .message {
-      margin: 6px 0;
+      gap: 4px;
       padding: 10px 14px;
+      margin: 6px 0;
+      background-color: #eeeeee;
       border-radius: 12px;
       max-width: 80%;
       font-size: 14px;
       line-height: 1.4;
-      word-wrap: break-word;
-    }
-
-    .user {
-      background-color: #d9eaff;
-      align-self: flex-end;
-      text-align: right;
-      border-bottom-right-radius: 4px;
-    }
-
-    .bot {
-      background-color: #eeeeee;
-      align-self: flex-start;
       border-bottom-left-radius: 4px;
+      animation: fadeIn 0.3s ease-in-out;
     }
 
-    #chat-input-container {
-      display: flex;
-      align-items: center;
-      border-top: 1px solid #ddd;
-      padding: 10px 12px;
-      background: #fff;
+    .typing span {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      background: #999;
+      border-radius: 50%;
+      animation: bounce 1.2s infinite;
     }
+
+    .typing span:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+    .typing span:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+    #chat-header button {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 18px;
+      cursor: pointer;
+      margin-left: 8px;
+    }
+
+    #chat-header button:hover {
+      color: #d0d0ff;
+    }
+
+
+    #chat-container.fullscreen {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 90vw !important;
+    height: 90vh !important;
+    opacity: 0;
+    z-index: 10000;
+    border-radius: 12px;
+    transition: transform 0.4s ease, opacity 0.5s ease;
+  }
+
+  #chat-container.fullscreen.show {
+    transform: translate(-50%, -50%);
+    opacity: 1;
+  }
+
+  #chatFullscreenBtn{
+    padding: 0;
+    margin: 0 !important;      
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px !important;
+    margin-top: -3px !important;
+  }
+  #chatCloseBtn{
+    height: 20px;
+      padding: 0;
+    margin: 0 !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+
+  .model-selector{
+    background: transparent;
+    color: white;
+    font-size: 17px;
+    border: none;
+    outline: none;
+    transition: all 0.3s ease;
+    font-family: 'Segoe UI', sans-serif;
+
+  }
+
+
+    .model-selector:hover {
+      border-color: #4f46e5;
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+    }
+
+    .model-selector:focus {
+      outline: none;
+      border: none;
+      box-shadow: none;
+    }
+
+    .model-selector option {
+      padding: 10px;
+      font-size: 14px;
+      cursor: pointer;
+      color: black;
+      border-radius: 10px;
+    }
+
+
+
+
+    @keyframes bounce {
+      0%, 80%, 100% {
+        transform: scale(0.8);
+        opacity: 0.3;
+      }
+      40% {
+        transform: scale(1.2);
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
 
     #chat-input {
       flex: 1;
       padding: 10px 12px;
       border: 1px solid #ccc;
-      border-radius: 999px;
+      border-radius: 12px;
       font-size: 14px;
       outline: none;
+      resize: none;
+      overflow-y: auto;
+      min-height: 10px;
+      max-height: 100px;
+      line-height: 1.4;
+      word-wrap: break-word;
+      white-space: pre-wrap;
     }
 
-    #send-btn {
-      background: none;
+    .webModal{
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 400px ;
+      height: 400px;
+      z-index: 10000;
+      border-radius: 12px;
+      transition: transform 0.4s ease, opacity 0.5s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      border: 1px solid rgba(175, 175, 175, 0.529);
+      padding: 40px;
+      background: linear-gradient(135deg, #4f8aff, #3b5bff);
+      display: none;
+    }
+
+    .webModal-title{
+      font-size: 40px;
+      text-align: center;
+      color: white;
+    }
+    .webModal-subTitle{
+      font-size: 20px;
+      margin-bottom: 15px;
+      color: white;
+    }
+
+    .web-input{
+      padding: 10px;
+      width: 300px;
+      outline: none;
       border: none;
-      margin-left: 8px;
-      cursor: pointer;
-      color: #3b5bff;
-      padding: 6px;
+      border-radius: 6px;
+      font-size: 17px;
+    }
+
+    .status{
+      width: 200px;
+      background-color: whitesmoke;
+      text-align: center;
+      margin-top: 20px;
+      padding: 10px;
+      font-size: 17px;
+    }
+
+    .inputWrapper{
       display: flex;
       align-items: center;
       justify-content: center;
+      gap: 10px;
     }
 
-    #send-btn:hover {
-      color: #244fff;
-    }
-
-    #send-btn svg {
-      width: 22px;
-      height: 22px;
-    }
-
-    #url-input {
-      padding: 4px 8px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      font-size: 12px;
-      margin-right: 4px;
-      width: 120px;
-    }
-
-    #scrape-btn {
-      background: #fff;
+    .closeModal{
+      background: transparent;
       border: none;
-      color: #3b5bff;
+      color: white;
+      width: 30px;
+      position: absolute;
+      right: 20px;
+      top: 10px;
       cursor: pointer;
-      padding: 4px 8px;
-      font-size: 12px;
-      border-radius: 8px;
-      margin-right: 8px;
     }
 
-    #scrape-btn:hover {
-      background: #f0f0ff;
-    }
-    .typing {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 10px 14px;
-    margin: 6px 0;
-    background-color: #eeeeee;
-    border-radius: 12px;
-    max-width: 80%;
-    font-size: 14px;
-    line-height: 1.4;
-    border-bottom-left-radius: 4px;
-    animation: fadeIn 0.3s ease-in-out;
-  }
-
-  .typing span {
-    display: inline-block;
-    width: 6px;
-    height: 6px;
-    background: #999;
-    border-radius: 50%;
-    animation: bounce 1.2s infinite;
-  }
-
-  .typing span:nth-child(2) {
-    animation-delay: 0.2s;
-  }
-  .typing span:nth-child(3) {
-    animation-delay: 0.4s;
-  }
-  #chat-header button {
-    background: none;
-    border: none;
-    color: white;
-    font-size: 18px;
-    cursor: pointer;
-    margin-left: 8px;
-  }
-
-  #chat-header button:hover {
-    color: #d0d0ff;
-  }
-
-
-  #chat-container.fullscreen {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  width: 90vw !important;
-  height: 90vh !important;
-  opacity: 0;
-  z-index: 10000;
-  border-radius: 12px;
-  transition: transform 0.4s ease, opacity 0.5s ease;
-}
-
-#chat-container.fullscreen.show {
-  transform: translate(-50%, -50%);
-  opacity: 1;
-}
-
-#chatFullscreenBtn{
-  padding: 0;
-  margin: 0 !important;
-  height: 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 20px !important;
-  margin-top: -3px !important;
-}
-#chatCloseBtn{
-  height: 20px;
-    padding: 0;
-  margin: 0 !important;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-
-.model-selector{
-  background: transparent;
-  color: white;
-  font-size: 17px;
-  border: none;
-  outline: none;
-  transition: all 0.3s ease;
-  font-family: 'Segoe UI', sans-serif;
-
-}
-
-
-  .model-selector:hover {
-    border-color: #4f46e5;
-    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
-  }
-
-  .model-selector:focus {
-    outline: none;
-    border: none;
-    box-shadow: none;
-  }
-
-  .model-selector option {
-    padding: 10px;
-    font-size: 14px;
-    cursor: pointer;
-    color: black;
-    border-radius: 10px;
-  }
+    </style>
 
 
 
+  <!-- Chat Toggle Button -->
+  <div class="chat-icon" id="chatBtn">
+    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24">
+      <g fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+        <path stroke-dasharray="72" stroke-dashoffset="72" d="M3 19.5v-15.5c0 -0.55 0.45 -1 1 -1h16c0.55 0 1 0.45 1 1v12c0 0.55 -0.45 1 -1 1h-14.5Z">
+          <animate fill="freeze" attributeName="stroke-dashoffset" dur="0.6s" values="72;0"></animate>
+        </path>
+        <path stroke-dasharray="10" stroke-dashoffset="10" d="M8 7h8">
+          <animate fill="freeze" attributeName="stroke-dashoffset" begin="0.7s" dur="0.2s" values="10;0"></animate>
+        </path>
+        <path stroke-dasharray="10" stroke-dashoffset="10" d="M8 10h8">
+          <animate fill="freeze" attributeName="stroke-dashoffset" begin="1s" dur="0.2s" values="10;0"></animate>
+        </path>
+        <path stroke-dasharray="6" stroke-dashoffset="6" d="M8 13h4">
+          <animate fill="freeze" attributeName="stroke-dashoffset" begin="1.3s" dur="0.2s" values="6;0"></animate>
+        </path>
+      </g>
+    </svg>
+  </div>
 
-  @keyframes bounce {
-    0%, 80%, 100% {
-      transform: scale(0.8);
-      opacity: 0.3;
-    }
-    40% {
-      transform: scale(1.2);
-      opacity: 1;
-    }
-  }
+  <!-- Chat Container -->
+  <div id="chat-container">
+    <div id="chat-header">
 
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
+      
 
-
-  #chat-input {
-    flex: 1;
-    padding: 10px 12px;
-    border: 1px solid #ccc;
-    border-radius: 12px;
-    font-size: 14px;
-    outline: none;
-    resize: none;
-    overflow-y: auto;
-    min-height: 10px;
-    max-height: 100px;
-    line-height: 1.4;
-    word-wrap: break-word;
-    white-space: pre-wrap;
-  }
+      <select class="model-selector" id="model-select">
+        <option value="gpt-4o">GPT 4o</option>
+        <option value="gemini">Gemini Pro</option>
+      </select>
 
 
-  </style>
+      <button class="web-btn" onclick="openModal(true)">Web Scraping</button>
 
-<!-- Chat Toggle Button -->
-<div class="chat-icon" id="chatBtn">
-  <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24">
-    <g fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
-      <path stroke-dasharray="72" stroke-dashoffset="72" d="M3 19.5v-15.5c0 -0.55 0.45 -1 1 -1h16c0.55 0 1 0.45 1 1v12c0 0.55 -0.45 1 -1 1h-14.5Z">
-        <animate fill="freeze" attributeName="stroke-dashoffset" dur="0.6s" values="72;0"></animate>
-      </path>
-      <path stroke-dasharray="10" stroke-dashoffset="10" d="M8 7h8">
-        <animate fill="freeze" attributeName="stroke-dashoffset" begin="0.7s" dur="0.2s" values="10;0"></animate>
-      </path>
-      <path stroke-dasharray="10" stroke-dashoffset="10" d="M8 10h8">
-        <animate fill="freeze" attributeName="stroke-dashoffset" begin="1s" dur="0.2s" values="10;0"></animate>
-      </path>
-      <path stroke-dasharray="6" stroke-dashoffset="6" d="M8 13h4">
-        <animate fill="freeze" attributeName="stroke-dashoffset" begin="1.3s" dur="0.2s" values="6;0"></animate>
-      </path>
-    </g>
-  </svg>
-</div>
-
-<!-- Chat Container -->
-<div id="chat-container">
-  <div id="chat-header">
-
-    <input id="url-input" type="text" placeholder="Website URL" />
-    <button id="scrape-btn" onclick="scrapeWebsite()">Web Scraping</button>
-
-    <select class="model-selector" id="model-select">
-      <option value="gpt-4o">GPT 4o</option>
-      <option value="gemini">Gemini Pro</option>
-    </select>
-    <div style="display: flex; align-items: center; justify-content: center;" >
-      <button id="chatCloseBtn" aria-label="Close chat">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2" d="m8 8l4 4m0 0l4 4m-4-4l4-4m-4 4l-4 4"/></svg>
-      </button>
-      <button id="chatFullscreenBtn" aria-label="Toggle fullscreen">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 16 16"><path fill="currentColor" fill-rule="evenodd" d="M11.293 4H9.848V3H13v3.152h-1V4.707L9.354 7.354l-.708-.708zM4 11.293l2.646-2.647l.708.708L4.707 12h1.445v1H3V9.848h1z" clip-rule="evenodd"/></svg>
+      <div style="display: flex; align-items: center; justify-content: center;" >
+        <button id="chatCloseBtn" aria-label="Close chat">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2" d="m8 8l4 4m0 0l4 4m-4-4l4-4m-4 4l-4 4"/></svg>
+        </button>
+        <button id="chatFullscreenBtn" aria-label="Toggle fullscreen">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 16 16"><path fill="currentColor" fill-rule="evenodd" d="M11.293 4H9.848V3H13v3.152h-1V4.707L9.354 7.354l-.708-.708zM4 11.293l2.646-2.647l.708.708L4.707 12h1.445v1H3V9.848h1z" clip-rule="evenodd"/></svg>
+        </button>
+      </div>
+    </div>
+    <div id="chat-messages"></div>
+    <div id="chat-input-container">
+      <textarea id="chat-input" placeholder="Type a message..." rows="1"></textarea>
+      <button id="send-btn" onclick="sendMessage()" aria-label="Send message">
+        <!-- Submit SVG Icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21.048 3.053C18.87.707 2.486 6.453 2.5 8.55c.015 2.379 6.398 3.11 8.167 3.607c1.064.299 1.349.604 1.594 1.72c1.111 5.052 1.67 7.566 2.94 7.622c2.027.09 7.972-16.158 5.847-18.447M11.5 12.5L15 9" color="currentColor"></path>
+        </svg>
       </button>
     </div>
   </div>
-  <div id="chat-messages"></div>
-  <div id="chat-input-container">
-    <textarea id="chat-input" placeholder="Type a message..." rows="1"></textarea>
-    <button id="send-btn" onclick="sendMessage()" aria-label="Send message">
-      <!-- Submit SVG Icon -->
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21.048 3.053C18.87.707 2.486 6.453 2.5 8.55c.015 2.379 6.398 3.11 8.167 3.607c1.064.299 1.349.604 1.594 1.72c1.111 5.052 1.67 7.566 2.94 7.622c2.027.09 7.972-16.158 5.847-18.447M11.5 12.5L15 9" color="currentColor"></path>
-      </svg>
+
+
+  <div id="webModal" class="webModal">
+     <button class="closeModal" onclick="openModal(false)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2" d="m8 8l4 4m0 0l4 4m-4-4l4-4m-4 4l-4 4"/></svg>
     </button>
+    <h3 class="webModal-title">Want to Scrap Content From a website</h3>
+    <span class="webModal-subTitle">Enter the link below</span>
+    <div class="inputWrapper">
+      <input type="text" id="url-input" class="web-input" placeholder="https://example.com">
+      <button id="scrape-btn" onclick="scrapeWebsite()">Scrap</button>
+    </div>
+
+    <div class="status">
+      Status: <span id="status">N/A</span>
+
+    </div>
   </div>
-</div>
 
 
 
-<script>
-  const chatBtn = document.getElementById('chatBtn');
-  const chatBox = document.getElementById('chat-container');
-  const chatCloseBtn = document.getElementById('chatCloseBtn');
-  const urlInput = document.getElementById('url-input');
-  const chatInput = document.getElementById('chat-input');
-  const messagesDiv = document.getElementById('chat-messages');
+  <script>
+    const chatBtn = document.getElementById('chatBtn');
+    const chatBox = document.getElementById('chat-container');
+    const chatCloseBtn = document.getElementById('chatCloseBtn');
+    const urlInput = document.getElementById('url-input');
+    const chatInput = document.getElementById('chat-input');
+    const messagesDiv = document.getElementById('chat-messages');
+    const webModal = document.getElementById('webModal');
 
-  let stage = 0;
-  let userName = '';
-  let userEmail = '';
-  let userContext = '';
-  const conversation = [];
-  const chatHistory = [];
-  let chatId = null;
-  let scrapedContent = '';
+    let stage = 0;
+    let userName = '';
+    let userEmail = '';
+    let userContext = '';
+    const conversation = [];
+    const chatHistory = [];
+    let chatId = null;
 
-  async function scrapeWebsite() {
-    const url = urlInput.value.trim();
-    if (!url) return;
 
-    const typingDiv = document.createElement('div');
-    typingDiv.classList.add('typing');
-    typingDiv.innerHTML = '<span></span><span></span><span></span>';
-    messagesDiv.appendChild(typingDiv);
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
-
-    try {
-      const response = await fetch('http://localhost:3000/api/rag', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url })
-      });
-      const data = await response.json();
-      messagesDiv.removeChild(typingDiv);
-      if (response.ok) {
-        scrapedContent = data.text || '';
-        messagesDiv.innerHTML += `<div class="message bot">${data.message}</div>`;
+  const openModal = (open) => {
+      if(open == true){
+        webModal.style.display = 'flex';
       } else {
-        scrapedContent = '';
-        messagesDiv.innerHTML += `<div class="message bot">❌ ${data.message}</div>`;
+        webModal.style.display = 'none';
       }
-      messagesDiv.scrollTop = messagesDiv.scrollHeight;
-    } catch (e) {
-      messagesDiv.removeChild(typingDiv);
-      messagesDiv.innerHTML += `<div class="message bot">❌ Error: ${e.message}</div>`;
-      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
     }
-  }
 
-  const modelSelect = document.getElementById('model-select');
-  let selectedModel = modelSelect.value;
-  modelSelect.addEventListener('change', () => {
-    selectedModel = modelSelect.value;
-  });
-
-
-  let hasStarted = false;
-
-  chatInput.addEventListener('input', () => {
-    chatInput.style.height = 'auto';
-    chatInput.style.height = chatInput.scrollHeight + 'px';
-  });
+    document.getElementById('url-input').addEventListener('keydown', function(event) {
+      if (event.key === 'Enter') {
+        event.preventDefault(); // prevent form submission if any
+        scrapeWebsite();
+      }
+    });
 
 
+    async function scrapeWebsite() {
+      const url = urlInput.value.trim();
+      if (!url) return;
 
-  chatInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault(); // Prevent newline
-      sendMessage();
-    }
-  });
+      const typingDiv = document.createElement('div');
+      typingDiv.classList.add('typing');
+      typingDiv.innerHTML = '<span></span><span></span><span></span>';
+      messagesDiv.appendChild(typingDiv);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
 
-
-
-  chatBtn.addEventListener('click', () => {
-    chatBox.style.display = "flex";
-
-    if (!hasStarted) {
-      hasStarted = true;
-      setTimeout(() => {
-        messagesDiv.innerHTML += `<div class="message bot">👋 Hi there! What's your name?</div>`;
+      try {
+        const response = await fetch('http://localhost:3000/api/rag', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url })
+        });
+        const data = await response.json();
+        messagesDiv.removeChild(typingDiv);
+        if (response.ok) {
+          messagesDiv.innerHTML += `<div class="message bot">${data.message}</div>`;
+        } else {
+          messagesDiv.innerHTML += `<div class="message bot">❌ ${data.message}</div>`;
+        }
         messagesDiv.scrollTop = messagesDiv.scrollHeight;
-      }, 200);
+      } catch (e) {
+        messagesDiv.removeChild(typingDiv);
+        messagesDiv.innerHTML += `<div class="message bot">❌ Error: ${e.message}</div>`;
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      }
     }
-  });
+
+    const modelSelect = document.getElementById('model-select');
+    let selectedModel = modelSelect.value;
+    modelSelect.addEventListener('change', () => {
+      selectedModel = modelSelect.value;
+    });
 
 
-  chatCloseBtn.addEventListener('click', () => {
-    chatBox.style.display = "none";
-  });
+    let hasStarted = false;
 
-  chatInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') sendMessage();
-  });
+    chatInput.addEventListener('input', () => {
+      chatInput.style.height = 'auto';
+      chatInput.style.height = chatInput.scrollHeight + 'px';
+    });
 
 
-  const chatFullscreenBtn = document.getElementById('chatFullscreenBtn');
-  let isFullscreen = false;
 
-    chatFullscreenBtn.addEventListener('click', () => {
-      isFullscreen = !isFullscreen;
-
-      if (isFullscreen) {
-        chatBox.classList.add('fullscreen');
-        // Delay adding 'show' to trigger transition
-        setTimeout(() => chatBox.classList.add('show'), 10);
-        chatFullscreenBtn.textContent = '🗗';
-      } else {
-        chatBox.classList.remove('show');
-        // Wait for transition to finish before removing fullscreen
-        setTimeout(() => {
-          chatBox.classList.remove('fullscreen');
-        }, 500);
-        chatFullscreenBtn.textContent = '⛶';
+    chatInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault(); // Prevent newline
+        sendMessage();
       }
     });
 
 
 
-  async function sendMessage() {
-    const input = chatInput;
-    const message = input.value.trim();
-    if (!message) return;
+    chatBtn.addEventListener('click', () => {
+      chatBox.style.display = "flex";
 
-    messagesDiv.innerHTML += `<div class="message user">${message}</div>`;
-    chatHistory.push({ role: 'user', text: message });
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
-    input.value = '';
-
-    if (stage === 0) {
-      userName = message;
-      conversation.push(userName);
-      stage = 1;
-      setTimeout(() => {
-        const botMsg = `Nice to meet you, ${userName}! What's your email address?`;
-        messagesDiv.innerHTML += `<div class="message bot">${botMsg}</div>`;
-        chatHistory.push({ role: 'bot', text: botMsg });
-        messagesDiv.scrollTop = messagesDiv.scrollHeight;
-      }, 300);
-    } else if (stage === 1) {
-      userEmail = message;
-      conversation.push(userEmail);
-      stage = 2;
-      setTimeout(() => {
-        const botMsg = 'Thanks! Lastly, Please tell me about yourself?';
-        messagesDiv.innerHTML += `<div class="message bot">${botMsg}</div>`;
-        chatHistory.push({ role: 'bot', text: botMsg });
-        messagesDiv.scrollTop = messagesDiv.scrollHeight;
-      }, 300);
-    } else if (stage === 2) {
-      userContext = message;
-      conversation.push(userContext);
-      stage = 3;
-      await sendQuestion(userContext);
-    } else {
-      await sendQuestion(message);
-    }
-  }
-
-  async function sendQuestion(question) {
-    const typingDiv = document.createElement('div');
-    typingDiv.classList.add('typing');
-    typingDiv.innerHTML = '<span></span><span></span><span></span>';
-    messagesDiv.appendChild(typingDiv);
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      if (!hasStarted) {
+        hasStarted = true;
+        setTimeout(() => {
+          messagesDiv.innerHTML += `<div class="message bot">👋 Hi there! What's your name?</div>`;
+          messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }, 200);
+      }
+    });
 
 
-    // https://studio.geniusai.biz/api/question
-    // http://localhost:3000
+    chatCloseBtn.addEventListener('click', () => {
+      chatBox.style.display = "none";
+    });
+
+    chatInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') sendMessage();
+    });
 
 
-    try {
-      const response = await fetch('http://localhost:3000/api/question', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          question,
-          conversation: chatHistory,
-          model: selectedModel,
-          webContent: scrapedContent
-        }),
+    const chatFullscreenBtn = document.getElementById('chatFullscreenBtn');
+    let isFullscreen = false;
+
+      chatFullscreenBtn.addEventListener('click', () => {
+        isFullscreen = !isFullscreen;
+
+        if (isFullscreen) {
+          chatBox.classList.add('fullscreen');
+          // Delay adding 'show' to trigger transition
+          setTimeout(() => chatBox.classList.add('show'), 10);
+          chatFullscreenBtn.textContent = '🗗';
+        } else {
+          chatBox.classList.remove('show');
+          // Wait for transition to finish before removing fullscreen
+          setTimeout(() => {
+            chatBox.classList.remove('fullscreen');
+          }, 500);
+          chatFullscreenBtn.textContent = '⛶';
+        }
       });
-      const data = await response.json();
-      const reply = data.data || data.message;
-      messagesDiv.removeChild(typingDiv);
-      messagesDiv.innerHTML += `<div class="message bot">${reply}</div>`;
-      chatHistory.push({ role: 'bot', text: reply });
-      messagesDiv.scrollTop = messagesDiv.scrollHeight;
-      await saveChat();
 
-    } catch (error) {
-      messagesDiv.innerHTML += `<div class="message bot">❌ Error: ${error.message}</div>`;
+
+
+    async function sendMessage() {
+      const input = chatInput;
+      const message = input.value.trim();
+      if (!message) return;
+
+      messagesDiv.innerHTML += `<div class="message user">${message}</div>`;
+      chatHistory.push({ role: 'user', text: message });
       messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      input.value = '';
+
+      if (stage === 0) {
+        userName = message;
+        conversation.push(userName);
+        stage = 1;
+        setTimeout(() => {
+          const botMsg = `Nice to meet you, ${userName}! What's your email address?`;
+          messagesDiv.innerHTML += `<div class="message bot">${botMsg}</div>`;
+          chatHistory.push({ role: 'bot', text: botMsg });
+          messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }, 300);
+      } else if (stage === 1) {
+        userEmail = message;
+        conversation.push(userEmail);
+        stage = 2;
+        setTimeout(() => {
+          const botMsg = 'Thanks! Lastly, Please tell me about yourself?';
+          messagesDiv.innerHTML += `<div class="message bot">${botMsg}</div>`;
+          chatHistory.push({ role: 'bot', text: botMsg });
+          messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }, 300);
+      } else if (stage === 2) {
+        userContext = message;
+        conversation.push(userContext);
+        stage = 3;
+        await sendQuestion(userContext);
+      } else {
+        await sendQuestion(message);
+      }
     }
-  }
 
-  async function saveChat() {
-    try {
-      if (!chatId) {
-        const res = await fetch('http://localhost:3000/api/chat', {
+    async function sendQuestion(question) {
+      const typingDiv = document.createElement('div');
+      typingDiv.classList.add('typing');
+      typingDiv.innerHTML = '<span></span><span></span><span></span>';
+      messagesDiv.appendChild(typingDiv);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+
+      // https://studio.geniusai.biz/api/question
+      // http://localhost:3000
+
+
+      try {
+        const response = await fetch('http://localhost:3000/api/question', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            name: userName,
-            email: userEmail,
-            info: userContext,
-            conversation: chatHistory
-          })
+            question,
+            conversation: chatHistory,
+            model: selectedModel
+          }),
         });
-        const data = await res.json();
-        chatId = data.id;
-      } else {
-        await fetch(`http://localhost:3000/chat/${chatId}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ conversation: chatHistory })
-        });
+        const data = await response.json();
+        const reply = data.data || data.message;
+        messagesDiv.removeChild(typingDiv);
+        messagesDiv.innerHTML += `<div class="message bot">${reply}</div>`;
+        chatHistory.push({ role: 'bot', text: reply });
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        await saveChat();
+
+      } catch (error) {
+        messagesDiv.innerHTML += `<div class="message bot">❌ Error: ${error.message}</div>`;
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
       }
-
-      console.log('saved');
-      
-    } catch (e) {
-      console.error('Failed to save chat', e);
     }
-  }
+
+    async function saveChat() {
+      try {
+        if (!chatId) {
+          const res = await fetch('http://localhost:3000/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              name: userName,
+              email: userEmail,
+              info: userContext,
+              conversation: chatHistory
+            })
+          });
+          const data = await res.json();
+          chatId = data.id;
+        } else {
+          await fetch(`http://localhost:3000/chat/${chatId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ conversation: chatHistory })
+          });
+        }
+
+        console.log('saved');
+        
+      } catch (e) {
+        console.error('Failed to save chat', e);
+      }
+    }
 
 
-</script>
+  </script>
 
-</body>
-</html>
+  </body>
+  </html>
